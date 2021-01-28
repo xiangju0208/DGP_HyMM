@@ -18,10 +18,10 @@ COMtable_ct            = COMtable;
 % % % % % % % % % % %    
 rng(1111)
 [n_gene_all, n_disease] = size(Matrix_gene_dis00);           
-nCVTimes  = 5,   n_fold    = 5 ,   CVtype = [num2str(n_fold),'-foldCV'], MinSizeDisGeSet = n_fold ;  
+nCVTimes  = 50,   n_fold    = 5 ,   CVtype = [num2str(n_fold),'-foldCV'], MinSizeDisGeSet = n_fold ;  
 
 dis_IDset = find(n_disgenes_eachdisease>=MinSizeDisGeSet); 
-dis_IDset = dis_IDset(1:3)   %%%%%%%%%%%%%%     
+%%dis_IDset = dis_IDset(1:3)   %%%for test only %%%%%%%%%%%     
 
 n_disease_in_Table = length( dis_IDset   ); 
 nCV_list   = zeros( n_disease_in_Table, 1 );  	
@@ -89,16 +89,13 @@ end
  
 matRESmean = [mean(matAUROC_nCVTimes,1);mean(matAURecall_nCVTimes,1);mean(matRecall50_nCVTimes,1) ]   
 tbRESmean  = array2table(matRESmean, 'VariableNames', methodnames, 'RowNames',{'AUROC','AURecall','matRecall50'}); 
-%
-matRESstd  = [std(matAUROC_nCVTimes,0,1);std(matAURecall_nCVTimes,0,1);std(matRecall50_nCVTimes,0,1) ]   
-tbRESstd   = array2table(matRESstd, 'VariableNames', methodnames, 'RowNames',{'AUROC','AURecall','matRecall50'}); 
-%
+% 
 dir_results = 'results';  
 if ~exist(dir_results,'dir'); mkdir(dir_results);end 
 date_cmplt = datestr(now,'yyyy.mmm.dd-HH.MM.SS');
 parastr    = sprintf('CVtype=%s_CVtime=%d_MSDGS%d', CVtype  ,  nCVTimes, MinSizeDisGeSet );   
 outfile    = [dir_results,filesep,'ResPerf_HMM_UnifyRank_',Com_Methodname_abbr,'_Ninterval_',num2str(interval_n_partition),'_',netname,'_',DisSetName,'_',parastr,'_',date_cmplt,'.mat'] 
-save([outfile],  'tbRESmean','tbRESstd',  'date_cmplt'  , '-v7.3' )   ;   
+save([outfile],  'tbRESmean',   'date_cmplt'  , '-v7.3' )   ;   
 
      
      
