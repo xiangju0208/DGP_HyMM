@@ -21,7 +21,7 @@ rng(1111)
 nCVTimes  = 50,   n_fold    = 5 ,   CVtype = [num2str(n_fold),'-foldCV'], MinSizeDisGeSet = n_fold ;  
 
 dis_IDset = find(n_disgenes_eachdisease>=MinSizeDisGeSet); 
-%%dis_IDset = dis_IDset(1:3)   %%%for test only %%%%%%%%%%%     
+%%dis_IDset = dis_IDset(1:2)   %%%for test only %%%%%%%%%%%     
 
 n_disease_in_Table = length( dis_IDset   ); 
 nCV_list   = zeros( n_disease_in_Table, 1 );  	
