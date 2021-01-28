@@ -18,17 +18,19 @@ COMtable_ct            = COMtable;
 % % % % % % % % % % %    
 rng(1111)
 [n_gene_all, n_disease] = size(Matrix_gene_dis00);           
+% % nCVTimes  = 2,   n_fold    = 5 ,   CVtype = [num2str(n_fold),'-foldCV'], MinSizeDisGeSet = n_fold ;  
 nCVTimes  = 50,   n_fold    = 5 ,   CVtype = [num2str(n_fold),'-foldCV'], MinSizeDisGeSet = n_fold ;  
 
 dis_IDset = find(n_disgenes_eachdisease>=MinSizeDisGeSet); 
-%%dis_IDset = dis_IDset(1:2)   %%%for test only %%%%%%%%%%%     
+% % dis_IDset = dis_IDset(1:2)   %%%for test only %%%%%%%%%%%     
 
 n_disease_in_Table = length( dis_IDset   ); 
 nCV_list   = zeros( n_disease_in_Table, 1 );  	
-matAUROC_nCVTimes    = [];
-matAURecall_nCVTimes = [];
-matRecall50_nCVTimes = []; 
-for i_cv = 1:nCVTimes
+matAUROC_nCVTimes    = cell(nCVTimes,1);
+matAURecall_nCVTimes = cell(nCVTimes,1);
+matRecall50_nCVTimes = cell(nCVTimes,1);
+parfor i_cv = 1:nCVTimes
+    disp(['i_cv-',num2str(i_cv) ]) 
     %
     matAUROC    = [];
     matAURecall = [];
@@ -39,12 +41,12 @@ for i_cv = 1:nCVTimes
         Matrix_gene_dis_copy = Matrix_gene_dis00 ; 
         COM_Dataset          = COMtable_ct;  
         ID_dis = dis_IDset(ii_dis);  
-        disp(['i_cv-',num2str(i_cv),'; ii_dis-',num2str(ii_dis),'; ID_dis-',num2str(ID_dis)]) 
+        % disp(['i_cv-',num2str(i_cv),'; ii_dis-',num2str(ii_dis),'; ID_dis-',num2str(ID_dis)]) 
         ac_gene_dis00 = Matrix_gene_dis_copy(:,ID_dis ); 
         idx_pos       = find( ac_gene_dis00 );  n_pos = length( idx_pos); 
         idx_neg       = find( ~ac_gene_dis00 ); n_neg = length( idx_neg); 
         n_fold_real   = min(n_fold, n_pos) ;   
-        ind_fold_pos      = crossvalind('Kfold', n_pos, n_fold_real ) ; 
+        ind_fold_pos  = crossvalind('Kfold', n_pos, n_fold_real ) ; 
         ind_fold_neg  = crossvalind('Kfold', n_neg, n_fold_real ) ; 
         for i_fold = 1:n_fold_real 
             t1 = toc ; 
@@ -62,11 +64,9 @@ for i_cv = 1:nCVTimes
             % use disease similarity       
             [TableScores2, COM_Dataset ] = A_DGP_HyMM(COM_Dataset, AdjGfG,AdjGfD,AdjDfD, ID_dis, {} ,RankMergeMethod  )     ;          
 
-            %%%%%%%%%%%%%%%            
-            % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % %                 
+            %%%%%%%%%%%%%%%                              
             TableScores = [TableScores1,TableScores2]; 
-            methodset = TableScores.Properties.VariableNames ;
-            methodset_cell{ii_dis} = methodset;  
+            methodset = TableScores.Properties.VariableNames ;  
             %
             test_real = ac_gene_dis00(idx_test_pos_neg_WG);  
             [AUROCset, AURecallset , Recall50set  , n_gene,n_method, methodnames ] = getResPerfFromScorelist(test_real,TableScores(idx_test_pos_neg_WG,:) ) ; 
@@ -76,20 +76,25 @@ for i_cv = 1:nCVTimes
             matRecall50(idx_res,:) = Recall50set; 
 
         end 
-        
-        matAUROC_nCVTimes(i_cv,:)    = mean(matAUROC,1);
-        matAURecall_nCVTimes(i_cv,:) = mean(matAURecall,1);
-        matRecall50_nCVTimes(i_cv,:) = mean(matRecall50,1); 
-        toc
+        %
+        matAUROC_nCVTimes{i_cv}    = mean(matAUROC,1);
+        matAURecall_nCVTimes{i_cv} = mean(matAURecall,1);
+        matRecall50_nCVTimes{i_cv} = mean(matRecall50,1); 
+        % toc
     end 
     toc 
-    disp(' ')
-
+    disp('  ')
+% 
 end 
- 
+%  
+matAUROC_nCVTimes    = cat(1,matAUROC_nCVTimes{:});    
+matAURecall_nCVTimes = cat(1,matAURecall_nCVTimes{:});    
+matRecall50_nCVTimes = cat(1,matRecall50_nCVTimes{:}); 
+% 
 matRESmean = [mean(matAUROC_nCVTimes,1);mean(matAURecall_nCVTimes,1);mean(matRecall50_nCVTimes,1) ]   
 tbRESmean  = array2table(matRESmean, 'VariableNames', methodnames, 'RowNames',{'AUROC','AURecall','matRecall50'}); 
 % 
+%  save 
 dir_results = 'results';  
 if ~exist(dir_results,'dir'); mkdir(dir_results);end 
 date_cmplt = datestr(now,'yyyy.mmm.dd-HH.MM.SS');
