@@ -7,11 +7,13 @@ Matlab 2016 or above
 
 
 Codes 
+
 A_DGP_HyMM_ByRank.m: the recommended HyMM algorithms in the study. 
 main_HyMM.m: cross-validation code.  
 
 
 Dataset
+
 A demo dataset is located in the directory: data/demoDataSet&PPICOM_ModCM_delta=0.2.mat
 This dataset includes: 
 (1) disease-gene associations, disease-disease associations and gene-gene associations;  
@@ -19,6 +21,7 @@ This dataset includes:
 
 
 Results
+
 The results will be autamatically saved into the directory: results.  
 
 
