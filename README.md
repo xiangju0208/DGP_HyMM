@@ -9,6 +9,7 @@ Matlab 2016 or above
 ## Codes 
 A_DGP_HyMM_ByRank.m: the recommended HyMM algorithms in the study. <br>
 main_HyMM.m: cross-validation code.  <br>
+This code allows parallel execution. You can change "parfor" to "for" to cancel parallel execution  <br>
 
 
 ## Dataset
