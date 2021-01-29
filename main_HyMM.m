@@ -28,7 +28,7 @@ nCV_list   = zeros( n_disease_in_Table, 1 );
 matAUROC_nCVTimes    = cell(nCVTimes,1);
 matAURecall_nCVTimes = cell(nCVTimes,1);
 matRecall50_nCVTimes = cell(nCVTimes,1);
-for i_cv = 1:nCVTimes
+parfor i_cv = 1:nCVTimes
     disp(['i_cv-',num2str(i_cv) ]) 
     %
     matAUROC    = [];
