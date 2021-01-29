@@ -6,7 +6,6 @@ Com_Methodname= methodname
 netname    ='PPI'  
 DisSetName ='Mesh'
 interval_n_partition = 20 
-RankMergeMethod      = 'Rm'
 % % % % % % % % % % % % % % % % % 
 fdatestrForfile = datestr(now,'yyyy.mmm.dd-HH.MM.SS');  
 fdataset        = ['data',filesep,'demoDataSet&PPICOM_ModCM_delta=0.2.mat']
@@ -29,7 +28,7 @@ nCV_list   = zeros( n_disease_in_Table, 1 );
 matAUROC_nCVTimes    = cell(nCVTimes,1);
 matAURecall_nCVTimes = cell(nCVTimes,1);
 matRecall50_nCVTimes = cell(nCVTimes,1);
-parfor i_cv = 1:nCVTimes
+for i_cv = 1:nCVTimes
     disp(['i_cv-',num2str(i_cv) ]) 
     %
     matAUROC    = [];
@@ -58,13 +57,14 @@ parfor i_cv = 1:nCVTimes
             AdjGfD                       = Matrix_gene_dis_copy; 
             AdjGfD(idx_pos_test,ID_dis ) = 0 ;    
 
-            %%%%%%%%%%%%%    
-            [TableScores1, COM_Dataset ] = A_DGP_HyMM(COM_Dataset, AdjGfG,AdjGfD,[], ID_dis, {}, RankMergeMethod  )     ;          
+            %%%%%%%%%%%%%     
+            % use only PPI 
+            [TableScores1, COM_Dataset ] = A_DGP_HyMM(COM_Dataset, AdjGfG,AdjGfD,[],     ID_dis );          
 
             % use disease similarity       
-            [TableScores2, COM_Dataset ] = A_DGP_HyMM(COM_Dataset, AdjGfG,AdjGfD,AdjDfD, ID_dis, {} ,RankMergeMethod  )     ;          
+            [TableScores2, COM_Dataset ] = A_DGP_HyMM(COM_Dataset, AdjGfG,AdjGfD,AdjDfD, ID_dis );          
 
-            %%%%%%%%%%%%%%%                              
+            %%%%%%%%%%%%%                              
             TableScores = [TableScores1,TableScores2]; 
             methodset = TableScores.Properties.VariableNames ;  
             %

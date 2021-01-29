@@ -1,4 +1,4 @@
-function [TableScores, COM_Dataset ] = A_DGP_HyMM_ByRank(COM_Dataset, AdjGfG,AdjGfD,AdjDfD, DisIDset, plus_method_set, RankMergeMethod  ) 
+function [TableScores, COM_Dataset ] = A_DGP_HyMM(COM_Dataset, AdjGfG,AdjGfD,AdjDfD, DisIDset, plus_method_set, RankMergeMethod  ) 
 % % % % % % % % % % % % % % %    
 % % Input: 
 % % COM_Dataset is a table record the resolution and partition matrix;
@@ -6,7 +6,8 @@ function [TableScores, COM_Dataset ] = A_DGP_HyMM_ByRank(COM_Dataset, AdjGfG,Adj
 % % AdjGfD: associatins from Diseases (D) to Genes (G) GfD
 % % AdjDfD: associatins from Diseases (D) to Disease (G) 
 % % DisIDset: disease id 
-% % plus_method_set: baseline algorithms 
+% % plus_method_set: baseline algorithms. Given plus_method_set, output the results of baseline algorithms.  
+% % e.g. plus_method_set = {'RWRH'}; 
 % % RankMergeMethod: aggregation method
 % % Ouput:
 % % TableScores: a table whos variable record the scores of genes.
@@ -15,15 +16,20 @@ function [TableScores, COM_Dataset ] = A_DGP_HyMM_ByRank(COM_Dataset, AdjGfG,Adj
 % % % By Ju Xiang 
 % % % Email: xiang.ju@foxmail.com, xiangju@csu.edu.cn      
 
+    if ~exist('RankMergeMethod','var') || isempty(RankMergeMethod)
+        RankMergeMethod = 'Rm';
+    end
+
     if length(DisIDset)>1; error('only allow one disease each time');end 
-    IsWeighted     = true;     
-    used_MatrixOperation = 1 ; 
+    IsWeighted           = true;     
+    use_MatrixOperation  = 1 ; 
+    outputCompAlg        = true; 
         
     %   
     if IsWeighted
-        AdjGfG = ( AdjGfG + AdjGfG')/2 ; %  unweighting for SP   
+        AdjGfG = ( AdjGfG + AdjGfG')/2 ;  
     else
-        AdjGfG =   spones( AdjGfG | AdjGfG' )  ; %  unweighting for SP   
+        AdjGfG =   spones( AdjGfG | AdjGfG' )  ;  
     end
     % issparse  
     AdjGfG = sparse( AdjGfG ); 
@@ -31,19 +37,25 @@ function [TableScores, COM_Dataset ] = A_DGP_HyMM_ByRank(COM_Dataset, AdjGfG,Adj
     AdjDfD = sparse( AdjDfD ); 
     %      
     if ~isempty( AdjDfD )
-		if isempty( plus_method_set ); plus_method_set= {'RWRH'}; end 
+        if ~exist('plus_method_set','var')||isempty( plus_method_set )
+            plus_method_set = {'RWRH'}; 
+            outputCompAlg   = false; 
+        end 
         Yset =getExtendedInitialAssociationG2Dplus(AdjGfD, AdjDfD, DisIDset, [] ,  'RandomWalkIniProExtend2') ;
         ac_gene_dis = Yset(:,1);  
         use_heter = 1;  
     else
-		if isempty( plus_method_set ); plus_method_set= {'RWR'}; end
+        if ~exist('plus_method_set','var')||isempty( plus_method_set )
+            plus_method_set = {'RWR'}; 
+            outputCompAlg   = false; 
+        end
         use_heter = 0 ; 
         id_dis = DisIDset ; 
         ac_gene_dis = AdjGfD(:,id_dis);      
     end
     
     % % % % % % %  % % % % % %  
-    [TableScores_COM,COM_Dataset] = getGeneScoreByMultiscaleModuleMatrixOperationIN( COM_Dataset , ac_gene_dis,  used_MatrixOperation , RankMergeMethod  ); 
+    [TableScores_COM,COM_Dataset] = getGeneScoreByMultiscaleModuleMatrixOperationIN( COM_Dataset , ac_gene_dis,  use_MatrixOperation , RankMergeMethod  ); 
     if use_heter
         TableScores_COM.Properties.VariableNames = strcat( 'H',TableScores_COM.Properties.VariableNames);   
     end
@@ -79,7 +91,7 @@ function [TableScores, COM_Dataset ] = A_DGP_HyMM_ByRank(COM_Dataset, AdjGfG,Adj
     sorttype = 'descend';    
     TableScores_Rankplus = {};  
     if ~isempty(TableScores_plus)
-        TableScores = [TableScores_COM,TableScores_GGG,TableScores_plus];
+        %%% TableScores = [TableScores_COM,TableScores_GGG,TableScores_plus];
         varset_com  = TableScores_COM.Properties.VariableNames  ;
         varset_plus = TableScores_plus.Properties.VariableNames  ; n_plus = length( varset_plus );   
 		ScoreMat      = TableScores_plus{:,:};
@@ -94,7 +106,12 @@ function [TableScores, COM_Dataset ] = A_DGP_HyMM_ByRank(COM_Dataset, AdjGfG,Adj
         end
 		  
         TableScores_Rankplus  = [TableScores_Rankplus{:}];  
-        TableScores = [TableScores, TableScores_Rankplus  ] ;
+        if outputCompAlg
+            TableScores = [TableScores_COM,TableScores_GGG,TableScores_plus];
+            TableScores = [TableScores, TableScores_Rankplus  ] ;
+        else
+            TableScores = TableScores_Rankplus; 
+        end
     else
         TableScores = TableScores_COM;
     end 
@@ -136,7 +153,10 @@ function [Scores] = getScoreFromRankMat(rmat,RankMergeMethod)
 
         case {'Rgeomean','Rgm'}     % rmat is regarded as p-values, aggregate by geomean as in PNAS 
             Scores = -geomean(rmat,2);  
-
+            
+        case {'NDOS','ndos'}     %  aggregate by  NDOS
+            error('No definition.'); 
+             
         otherwise; error(['There is no definition for the method.']);
     end 
 end
