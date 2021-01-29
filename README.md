@@ -7,10 +7,10 @@ Matlab 2016 or above
 
 
 ## Codes 
-###main_HyMM.m: cross-validation code.  <br>
+### main_HyMM.m: cross-validation code.  <br>
 This code allows parallel execution. You can change "parfor" to "for" to cancel parallel execution  <br>
  <br>
-###A_DGP_HyMM_ByRank.m: the recommended HyMM algorithms in the study. <br>
+### A_DGP_HyMM_ByRank.m: the recommended HyMM algorithms in the study. <br>
 A_DGP_HyMM(COM_Dataset, AdjGfG,AdjGfD,AdjDfD, DisIDset, plus_method_set, RankMergeMethod  )   
 % Input:  <br>
 % COM_Dataset is a table record the resolution and partition matrices; <br>
