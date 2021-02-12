@@ -13,17 +13,17 @@ This code allows parallel execution. You can change "parfor" to "for" to cancel 
 #A_DGP_HyMM_ByRank.m: the recommended HyMM algorithms in the study. <br>
 A_DGP_HyMM(COM_Dataset, AdjGfG,AdjGfD,AdjDfD, DisIDset, plus_method_set, RankMergeMethod  )   
 % Input:  <br>
-% COM_Dataset is a table record the resolution and partition matrices; <br>
-% AdjGfG: associatins between (f) genes (G) and Genes (G)   <br>
-% AdjGfD: associatins between Diseases (D) and Genes (G)  <br>
-% AdjDfD: associatins between Diseases (D) and Disease (G)  <br>
-% DisIDset: disease id  <br>
-% plus_method_set: baseline algorithms. Given plus_method_set, output the results of baseline algorithms.   <br>
+% COM_Dataset is a table recording the partition matrices; <br>
+% AdjGfG: associatins between Genes (G) and Genes (G)   <br>
+% AdjGfD: associatins between Genes (G) and Diseases (D)  <br>
+% AdjDfD: associatins between Diseases (D) and Diseases (G)  <br>
+% DisIDset: disease index  <br>
+% plus_method_set: baseline algorithms. If plus_method_set is given, the results of baseline algorithms will be output.   <br>
 % e.g. plus_method_set = {'RWRH'};  <br>
 % RankMergeMethod: aggregation method <br>
 % Ouput: <br>
 % TableScores: a table whos variable record the scores of genes. <br>
-% COM_Dataset: record the multiscale partitions that are preprocessed, facilating the usage of partition information in the latter.  <br>
+% COM_Dataset: multiscale partitions that are preprocessed, facilating the usage of partition information in the latter, e.g. for cross-validation.  <br>
 
 
 ## Dataset
