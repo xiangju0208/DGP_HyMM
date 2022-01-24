@@ -41,12 +41,12 @@ This dataset includes: <br>
 ## Results 
 The results will be automatically saved into the directory: results.  
 
-## cite
+## Cite
 If you use HyMM in your research, please cite: <br>
 Xiang, et al., HyMM: Hybrid method for disease-gene prediction by integrating multiscale module structure, bioRxiv (2021), doi: 10.1101/2021.04.30.442111.
 
 
-## contact<br>
+## Contact<br>
 Email: xiang.ju@foxmail.com 
 
 
