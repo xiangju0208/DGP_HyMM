@@ -16,12 +16,12 @@ Matlab 2016 or above
 This code allows parallel execution. You can change "parfor" to "for" to cancel parallel execution  <br>
  <br>
 #A_HyMM.m: the recommended HyMM algorithm in the study. <br>
-A_HyMM(COM_Dataset, AdjGfG,AdjGfD,AdjDfD, DisIDset, plus_method_set, RankMergeMethod  )   
+A_HyMM(COM_Dataset, AdjGfG,AdjGfD,AdjDfD, DisIDset, plus_method_set, RankMergeMethod  )
 % Input:  <br>
 % COM_Dataset is a table recording the partition matrices; <br>
 % AdjGfG: associatins between Genes (G) and Genes (G)   <br>
 % AdjGfD: associatins between Genes (G) and Diseases (D)  <br>
-% AdjDfD: associatins between Diseases (D) and Diseases (G)  <br>
+% AdjDfD: associatins between Diseases (D) and Diseases (D)  <br>
 % DisIDset: disease index  <br>
 % plus_method_set: baseline algorithms. If plus_method_set is given, the results of baseline algorithms will be output.   <br>
 % e.g. plus_method_set = {'RWRH'};  <br>
